@@ -41,6 +41,16 @@ Breadboard and Wiring – For assembling and integrating the electronics of the 
 Windows 10 (21H2) – Used for programming the Arduino and running the CAD software.
 Arduino Hardware Environment – Used for uploading and testing the control logic on the robotic arm.
 
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+
+
+<h2>Built With</h2>
+
+* ![C++](https://img.shields.io/badge/C++-00599C?style=for-the-badge&logo=c%2B%2B&logoColor=white)
+* ![Arduino](https://img.shields.io/badge/Arduino-00979D?style=for-the-badge&logo=arduino&logoColor=white)
+* ![SolidWorks](https://img.shields.io/badge/SolidWorks-FF0000?style=for-the-badge&logo=solidworks&logoColor=white)
+
 <h2>Pictures Of The Design:</h2>
 
 <p align="center">
