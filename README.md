@@ -71,7 +71,9 @@ Attachment Of Sensor:  <br/>
 Final Video: 
 
 
-https://github.com/user-attachments/assets/c0ac72f3-7aaa-485c-bca2-ec7046be23d0
+https://github.com/user-attachments/assets/53fef103-e0f5-42ed-9a25-f91c883c6da9
+
+
 
 
 
