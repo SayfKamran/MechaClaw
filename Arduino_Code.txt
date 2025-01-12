@@ -1,0 +1,116 @@
+// C++ code
+#include <Servo.h>
+
+int arm_motor = 0;
+int claw_motor = 0;
+int buttonstate = 0;
+bool start = false;
+bool bin_detected = false;
+int y_pos;
+int claw_pos = 1000;
+int duration;
+int distance;
+Servo servo_10;
+Servo servo_9;
+
+void setup()
+{
+  Serial.begin(9600);
+
+  // Setting up Output Servo Motors
+  servo_10.attach(10, 500, 2500);
+  servo_9.attach(9, 500, 2500);
+  
+  // Setting up Devices
+  pinMode(7, INPUT); //button
+  pinMode(4, OUTPUT); // Sensor Trigger
+  pinMode(5, INPUT); //Sensor Echo
+}
+
+void loop()
+{
+  
+  if(start){
+    if(bin_detected){
+      delay(500);
+
+      // stopped at bin, step 2 is closing the claw
+      for (int j = 0; j < claw_pos; j+=5){
+        claw_motor = map(j, 0, 1023, 0, 180);
+        servo_9.write(claw_motor);
+        delay(10);
+        //arbitrarily choose claw_pos with real bin
+      }
+      
+      //step 3 - raise the claw back up quicker
+      Serial.println("Claw Closed: Raising Arm");
+      for (int k = y_pos; k >= 0; k-=10){
+        arm_motor = map(k, 0, 1023, 0, 180); 
+        servo_10.write(arm_motor);
+        delay(10); //wait for motor to move there
+      } 
+      
+      //step 4 - drop bin back onto the ground
+      Serial.println("Garbage Dumped: Lowering Arm");
+      for (int l; l < y_pos; l+=5){
+        arm_motor = map(l, 0, 1023, 0, 180); 
+        servo_10.write(arm_motor);
+        delay(10); //wait for motor to move there
+      }
+      
+      //step 5 - open claw back up
+      Serial.println("Arm Lowered: Releasing Bin");
+      for (int m = claw_pos; m > 0; m-=5){
+        claw_motor = map(m, 0, 1023, 0, 180);
+        servo_9.write(claw_motor);
+        delay(10); //wait for motor to move there
+      }
+      
+      //step 6 - reset claw back to starting position
+      Serial.println("Bin Released: Returning to Start Position");
+      for (int n = y_pos; n > 0; n-=5){
+        arm_motor = map(n, 0, 1023, 0, 180); 
+        servo_10.write(arm_motor);
+        delay(10); //wait for motor to move there
+      }
+      
+      //reset back to start again
+      start = false;
+      bin_detected = false;
+
+    } else{ //bin not detected
+      for (int i = 0; i < 1023; i++){
+
+        //setting up ultrasonic sensor and reading
+        digitalWrite(4, LOW);
+        delayMicroseconds(2);
+        digitalWrite(4, HIGH);
+        delayMicroseconds(10);
+        digitalWrite(4, LOW);
+        duration = pulseIn(5, HIGH);
+        distance = (duration/2) * 0.0343; //in cms
+
+        arm_motor = map(i, 0, 1023, 0, 180); 
+        servo_10.write(arm_motor);
+        delay(10); //wait for motor to move there
+
+        Serial.print("Distance: ");
+        Serial.println(distance);
+        
+        //check if the bin is detected
+        if(distance < 10){
+          bin_detected = true;
+          y_pos = i;
+          Serial.println("Bin Detected: Closing Claw");
+          break;
+        }
+      }
+    }  
+  }
+  
+  // detecting start of automatic process
+  else if(buttonstate = digitalRead(7)){
+    start = true;
+    Serial.println("Button Pressed: Starting Code");
+  }
+}
